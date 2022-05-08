@@ -14,13 +14,15 @@ namespace ChatClient
 {
     public partial class MainForm : Form
     {
-
         public const int WM_NCLBUTTONDOWN = 0xA1;
         public const int HT_CAPTION = 0x2;
         [DllImportAttribute("user32.dll")]
         public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
         [DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
+
+
+        Client clinet = new Client();
 
         public MainForm()
         {
@@ -39,6 +41,18 @@ namespace ChatClient
                 ReleaseCapture();
                 SendMessage(Handle, WM_NCLBUTTONDOWN, HT_CAPTION, 0);
             }
+        }
+
+        private void buttonConnect_Click(object sender, EventArgs e)
+        {
+            string ip = textBoxIP.Text;
+            int port = int.Parse(textBoxPort.Text);
+            clinet.Connect(ip,port);
+        }
+
+        private void buttonDisconnect_Click(object sender, EventArgs e)
+        {
+            clinet.Disonnect();
         }
     }
 }

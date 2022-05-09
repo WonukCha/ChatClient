@@ -21,12 +21,18 @@ namespace ChatClient
         [DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
 
-
-        Client clinet = new Client();
+        ChatClient chatClinet = new ChatClient();
 
         public MainForm()
         {
             InitializeComponent();
+
+            InitListview();
+
+            chatClinet.eOnConnect += OnConnect;
+            chatClinet.eOnDisconnect += OnDisconnect;
+            chatClinet.eOnReceive += OnReceive;
+            chatClinet.eOnSend += OnSend;
         }
 
         private void pictureBoxClose_Click(object sender, EventArgs e)
@@ -47,12 +53,82 @@ namespace ChatClient
         {
             string ip = textBoxIP.Text;
             int port = int.Parse(textBoxPort.Text);
-            clinet.Connect(ip,port);
+            chatClinet.Connect(ip,port);
         }
 
         private void buttonDisconnect_Click(object sender, EventArgs e)
         {
-            clinet.Disonnect();
+            chatClinet.Disonnect();
+
+        }
+        public void OnConnect(string ip, int port)
+        {
+            this.Invoke(new Action(delegate ()
+            {
+                labelNetworkStatus.Text = "Connect";
+                labelNetworkStatus.ForeColor = Color.Green;
+                AddListViewItem("OnConnect");
+            }));
+        }
+        public void OnDisconnect()
+        {
+            this.Invoke(new Action(delegate ()
+            {
+                labelNetworkStatus.Text = "Disconnet";
+                labelNetworkStatus.ForeColor = Color.Red;
+                AddListViewItem("OnDisconnet");
+            }));
+        }
+        public void OnReceive(byte[] bytes, int size)
+        {
+            this.Invoke(new Action(delegate ()
+            {
+                AddListViewItem("Receive");
+                AddListViewItem(bytes);
+            }));
+        }
+        public void OnSend(byte[] bytes, int size)
+        {
+            this.Invoke(new Action(delegate ()
+            {
+                AddListViewItem("Send");
+                AddListViewItem(bytes);
+            }));
+        }
+        private void InitListview()
+        {
+            listViewNetwork.View = View.Details;
+            listViewNetwork.Columns.Add("Time",100);
+            listViewNetwork.Columns.Add("Size", 100);
+            listViewNetwork.Columns.Add("Data", 400);
+        }
+        private void AddListViewItem(byte[] bytes)
+        {
+            string datetime = DateTime.Now.ToString("hh:mm:ss tt");
+            string size = bytes.Length.ToString();
+            string hex = BitConverter.ToString(bytes);
+
+            ListViewItem item = new ListViewItem(new string[] {datetime,size,hex });
+            listViewNetwork.Items.Add(item);
+        }
+        private void AddListViewItem(string str)
+        {
+            string datetime = DateTime.Now.ToString("hh:mm:ss tt");
+            string size = str.Length.ToString();
+
+            ListViewItem item = new ListViewItem(new string[] { datetime, size, str });
+            listViewNetwork.Items.Add(item);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonLogin_Click(object sender, EventArgs e)
+        {
+            if (chatClinet.Login(textBoxId.Text, textBoxPw.Text) == false)
+                AddListViewItem("[Error] ID, PW");
         }
     }
 }

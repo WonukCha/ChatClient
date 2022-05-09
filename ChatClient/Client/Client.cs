@@ -15,7 +15,7 @@ namespace ChatClient
     {
         private string lastErrorMsg;
 
-        private const int READ_TIMEOUT_SEC = 10;
+        private const int READ_TIMEOUT_SEC = 3;
         private const int MAX_QUEUE_SIZE = 100;
         private const int MAX_BUFFER_SIZE = 1024;
 
@@ -31,12 +31,13 @@ namespace ChatClient
 
         public virtual void OnConnect(string ip, int port) {}
         public virtual void OnDisconnect() { }
-        public virtual void OnReceive(int nbytes) { }
-        public virtual void OnSend(int nbytes) { }
+        public virtual void OnReceive(byte[] bytes,int size) { }
+        public virtual void OnSend(byte[] bytes, int size) { }
 
         public Client()
         {
-
+            tcpClient = new TcpClient();
+            StartThread();
         }
         ~Client()
         {
@@ -46,23 +47,21 @@ namespace ChatClient
         {
             try
             {
-                if (tcpClient != null)
+                if (tcpClient.Connected == false)
                 {
-                    tcpClient.Close();
-                    tcpClient = null;
+                    IPAddress serverIP = IPAddress.Parse(ip);
+                    int serverPort = port;
+                    tcpClient = new TcpClient();
+                    tcpClient.Connect(new IPEndPoint(serverIP, serverPort));
+                    stream = tcpClient.GetStream();
+                    stream.ReadTimeout = 1000 * READ_TIMEOUT_SEC; // 10초
+                    OnConnect(ip, port);
+                    return true;
                 }
-                IPAddress serverIP = IPAddress.Parse(ip);
-                int serverPort = port;
-                tcpClient = new TcpClient();
-                tcpClient.Connect(new IPEndPoint(serverIP, serverPort));
-                if (tcpClient == null || tcpClient.Connected == false)
+                else
+                {
                     return false;
-                
-                stream = tcpClient.GetStream();
-                stream.ReadTimeout = 1000 * READ_TIMEOUT_SEC; // 10초
-                StartThread();
-                OnConnect(ip, port);
-                return true;
+                }
             }
             catch(Exception ex)
             {
@@ -76,14 +75,11 @@ namespace ChatClient
                 return;
             if (tcpClient.Connected == false)
                 return;
-            StopThread();
             stream.Close();
             tcpClient.Close();
-            //C# !?!? um...
+
             receiveQueue = new ConcurrentQueue<byte[]>();
             sendQueue = new ConcurrentQueue<byte[]>();
-
-            OnDisconnect();
         }
         public bool SendData(byte[] data)
         {
@@ -147,20 +143,15 @@ namespace ChatClient
         {
             if (tcpClient == null)
                 return;
-            if (tcpClient.Connected == false)
-                return;
 
             runSendThread = true;
             sendThread = new Thread(SendThreadProc);
             sendThread.Name = "SendThread";
-
             sendThread.Start();
         }
         private void StartReceiveThread()
         {
             if (tcpClient == null)
-                return;
-            if (tcpClient.Connected == false)
                 return;
 
             runReceiveThread = true;
@@ -176,74 +167,57 @@ namespace ChatClient
             {
                 try
                 {
-                    nbytes = stream.Read(outbuf, 0, outbuf.Length);
-                    if (nbytes == 0)
+                    if(stream != null && stream.CanRead && tcpClient.Connected)
                     {
-                        StopSendThread();
-                        break;
-                    }
-                    else
-                    {
-                        if (receiveQueue.Count() < MAX_QUEUE_SIZE)
+                        nbytes = stream.Read(outbuf, 0, outbuf.Length);
+                        if (nbytes == 0)
                         {
-                            receiveQueue.Enqueue(outbuf);
+                            Disonnect();
+                            OnDisconnect();
                         }
                         else
                         {
-                            lastErrorMsg = "MAX_QUEUE_SIZE_ERROR";
+                            if (receiveQueue.Count() < MAX_QUEUE_SIZE)
+                            {
+                                receiveQueue.Enqueue(outbuf);
+                            }
+                            else
+                            {
+                                lastErrorMsg = "MAX_QUEUE_SIZE_ERROR";
+                            }
+                            OnReceive(outbuf, nbytes);
                         }
-                        OnReceive(nbytes);
                     }
+                    else
+                    {
+                        Thread.Sleep(16);
+                    }
+
                 }
                 catch (Exception ex)
                 {
                     lastErrorMsg = ex.Message;
+                    Disonnect();
+                    OnDisconnect();
                 }
-
             }
         }
         private void SendThreadProc()
         {
             while (runSendThread)
             {
-                if(sendQueue.Count() > 0)
+                if(sendQueue.Count() > 0 && stream !=null && stream.CanWrite)
                 {
                     byte[] buf = null;
                     sendQueue.TryDequeue(out buf);
                     stream.Write(buf,0, buf.Length);
-                    OnSend(buf.Length);
+                    OnSend(buf, buf.Length);
                 }
                 else
                 {
                     Thread.Sleep(16);
                 }
             }
-        }
-        private bool IsTcpPortAvailable(int tcpPort)
-        {
-            var ipgp = IPGlobalProperties.GetIPGlobalProperties();
-
-            // Check ActiveConnection ports
-            TcpConnectionInformation[] conns = ipgp.GetActiveTcpConnections();
-            foreach (var cn in conns)
-            {
-                if (cn.LocalEndPoint.Port == tcpPort)
-                {
-                    return false;
-                }
-            }
-
-            // Check LISTENING ports
-            IPEndPoint[] endpoints = ipgp.GetActiveTcpListeners();
-            foreach (var ep in endpoints)
-            {
-                if (ep.Port == tcpPort)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
     }
 }

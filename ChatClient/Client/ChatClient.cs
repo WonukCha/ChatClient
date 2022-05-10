@@ -10,6 +10,9 @@ namespace ChatClient
     public delegate void DOnDisconnect();
     public delegate void DOnReceive(byte[] bytes, int size);
     public delegate void DOnSend(byte[] bytes, int size);
+    public delegate void DReceiveChat(string chat);
+    public delegate void DResponse();
+
 
     internal class ChatClient : Client
     {
@@ -17,6 +20,9 @@ namespace ChatClient
         public event DOnDisconnect eOnDisconnect;
         public event DOnReceive eOnReceive;
         public event DOnSend eOnSend;
+        public event DReceiveChat eReceiveCommand;
+
+
         public override void OnConnect(string ip, int port) 
         {
             if(eOnConnect != null)
@@ -37,6 +43,7 @@ namespace ChatClient
             {
                 eOnReceive(bytes, size);
             }
+
         }
         public override void OnSend(byte[] bytes, int size) 
         {
@@ -45,7 +52,23 @@ namespace ChatClient
                 eOnSend(bytes, size);
             }
         }
+        private void MainProcess()
+        {
+
+        }
         public bool Login(string id, string pw)
+        {
+            return true;
+        }
+        public bool LogOut()
+        {
+            return true;
+        }
+        public bool EnterRoom(uint roomNumber)
+        {
+            return true;
+        }
+        public bool SendChat(string chat)
         {
             return true;
         }

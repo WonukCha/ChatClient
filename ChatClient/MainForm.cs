@@ -21,6 +21,7 @@ namespace ChatClient
         [DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
 
+
         ChatClient chatClinet = new ChatClient();
 
         public MainForm()
@@ -101,6 +102,9 @@ namespace ChatClient
             listViewNetwork.Columns.Add("Time",100);
             listViewNetwork.Columns.Add("Size", 100);
             listViewNetwork.Columns.Add("Data", 400);
+
+            listViewRoom.View = View.Details;
+            listViewRoom.Columns.Add("RoomNumber", 300);
         }
         private void AddListViewItem(byte[] bytes)
         {
@@ -116,8 +120,12 @@ namespace ChatClient
             string datetime = DateTime.Now.ToString("hh:mm:ss tt");
             string size = str.Length.ToString();
 
+            if (listViewNetwork.Items.Count > 2)
+            {
+                listViewNetwork.Items.RemoveAt(2);
+            }
             ListViewItem item = new ListViewItem(new string[] { datetime, size, str });
-            listViewNetwork.Items.Add(item);
+            listViewNetwork.Items.Insert(0,item);
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -129,6 +137,16 @@ namespace ChatClient
         {
             if (chatClinet.Login(textBoxId.Text, textBoxPw.Text) == false)
                 AddListViewItem("[Error] ID, PW");
+        }
+
+        private void buttonRoomEnter_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void buttonChatEnter_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

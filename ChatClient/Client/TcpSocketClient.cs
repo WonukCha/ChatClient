@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ChatClient
 {
-    internal class Client
+    internal class TcpSocketClient
     {
         private string lastErrorMsg;
 
@@ -19,7 +19,7 @@ namespace ChatClient
         private const int MAX_QUEUE_SIZE = 100;
         private const int MAX_BUFFER_SIZE = 1024;
 
-        private TcpClient tcpClient = null;
+        private TcpClient tcpClient = new TcpClient();
         private NetworkStream stream = null;
         private bool runSendThread = false;
         private bool runReceiveThread = false;
@@ -34,12 +34,11 @@ namespace ChatClient
         public virtual void OnReceive(byte[] bytes,int size) { }
         public virtual void OnSend(byte[] bytes, int size) { }
 
-        public Client()
+        public TcpSocketClient()
         {
-            tcpClient = new TcpClient();
             StartThread();
         }
-        ~Client()
+        ~TcpSocketClient()
         {
             StopThread();
         }

@@ -21,21 +21,20 @@ namespace ChatClient
         [DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
 
-
-        ChatClient chatClinet = new ChatClient();
+        ChatClient chatClinet = null;
 
         public MainForm()
         {
             InitializeComponent();
 
             InitListview();
-
+            chatClinet = new ChatClient();
             chatClinet.eOnConnect += OnConnect;
             chatClinet.eOnDisconnect += OnDisconnect;
             chatClinet.eOnReceive += OnReceive;
             chatClinet.eOnSend += OnSend;
-        }
 
+        }
         private void pictureBoxClose_Click(object sender, EventArgs e)
         {
             this.Close();

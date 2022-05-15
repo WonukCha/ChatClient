@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace ChatClient
 {
-    internal class TcpSocketClient
+    class TcpSocketClient : IDisposable
     {
         private string lastErrorMsg;
 
@@ -40,8 +40,12 @@ namespace ChatClient
         }
         ~TcpSocketClient()
         {
+        }
+        public void Dispose()
+        {
             StopThread();
         }
+
         public bool Connect(string ip, int port)
         {
             try

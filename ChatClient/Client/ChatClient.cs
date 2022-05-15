@@ -1,4 +1,5 @@
 ﻿using ChatClient.Client.Packet;
+using ChatClient.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace ChatClient
     public delegate void DReceiveChat(string chat);
     public delegate void DResponse();
 
-    internal class ChatClient : TcpSocketClient
+    class ChatClient : TcpSocketClient
     {
         public event DOnConnect eOnConnect;
         public event DOnDisconnect eOnDisconnect;
@@ -23,11 +24,13 @@ namespace ChatClient
         public event DOnSend eOnSend;
         public event DReceiveChat eReceiveCommand;
 
+        private PacketBufferManager packetBufferManager = new PacketBufferManager();
         private Queue<PacketData> receivePacketQqueue = new Queue<PacketData>();
         private Thread receiveThread = null;
         private bool runReceiveThread = false;
         public ChatClient()
         {
+            packetBufferManager.Init(1024,32,5);
             runReceiveThread = true;
             receiveThread = new Thread(ReceiveProcess);
             receiveThread.Name = "receiveThread";
@@ -35,11 +38,16 @@ namespace ChatClient
         }
         ~ChatClient()
         {
+            
+        }
+        public void Dispose()
+        {
             runReceiveThread = false;
             if (receiveThread != null)
             {
                 receiveThread.Join();
             }
+            base.Dispose();
         }
 
         public override void OnConnect(string ip, int port) 
@@ -62,6 +70,7 @@ namespace ChatClient
             {
                 eOnReceive(bytes, size);
             }
+            packetBufferManager.Write(bytes, 0, bytes.Length);
         }
         public override void OnSend(byte[] bytes, int size) 
         {
@@ -77,10 +86,15 @@ namespace ChatClient
             {
                 do
                 {
-                    if(receivePacketQqueue.Count() == 0)
-                        break;
-
-                    wasWorked = true;
+                    if (packetBufferManager.Size() > 0)
+                    {
+                        PacketData packetData = packetBufferManager.ReadPacket();
+                        wasWorked = true;
+                    }
+                    if (receivePacketQqueue.Count() == 0)
+                    {
+                        wasWorked = true;
+                    }
                 } while (false);
                 
                 if (wasWorked == false)

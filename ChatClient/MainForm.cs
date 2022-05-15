@@ -37,6 +37,8 @@ namespace ChatClient
         }
         private void pictureBoxClose_Click(object sender, EventArgs e)
         {
+            chatClinet.Dispose();
+            chatClinet = null;
             this.Close();
         }
 
@@ -134,8 +136,8 @@ namespace ChatClient
 
         private void buttonLogin_Click(object sender, EventArgs e)
         {
-            if (chatClinet.Login(textBoxId.Text, textBoxPw.Text) == false)
-                AddListViewItem("[Error] ID, PW");
+            //if (chatClinet.Login(textBoxId.Text, textBoxPw.Text) == false)
+            //    AddListViewItem("[Error] ID, PW");
         }
 
         private void buttonRoomEnter_Click(object sender, EventArgs e)

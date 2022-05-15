@@ -49,6 +49,7 @@
     <Compile Include="Client\BufferManager.cs" />
     <Compile Include="Client\ChatClient.cs" />
     <Compile Include="Client\Packet.cs" />
+    <Compile Include="Client\PacketBufferManager.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

@@ -8,11 +8,11 @@ namespace ChatClient.Client.Packet
 {
     struct PacketData
     {
+        
         public Int16 DataSize;
         public Int16 PacketID;
         public SByte Type;
         public byte[] BodyData;
     }
-
 
 }

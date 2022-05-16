@@ -30,7 +30,7 @@ namespace ChatClient.Client
                 packetData.Type = (SByte)heder[4];
                 if(packetData.DataSize <= Size())
                 {
-                    Read(heder, 0, mHeaderSize, true);
+                    Read(heder, 0, mHeaderSize);
                     byte[] packet = new byte[packetData.DataSize];
                     Read(packet,0, packetData.DataSize);
                     packetData.BodyData = packet;

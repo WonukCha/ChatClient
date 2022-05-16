@@ -50,6 +50,7 @@
     <Compile Include="Client\ChatClient.cs" />
     <Compile Include="Client\Packet.cs" />
     <Compile Include="Client\PacketBufferManager.cs" />
+    <Compile Include="Client\PacketDefine.cs" />
     <Compile Include="MainForm.cs">
       <SubType>Form</SubType>
     </Compile>

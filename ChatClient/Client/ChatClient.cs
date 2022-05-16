@@ -25,7 +25,6 @@ namespace ChatClient
         public event DReceiveChat eReceiveCommand;
 
         private PacketBufferManager packetBufferManager = new PacketBufferManager();
-        private Queue<PacketData> receivePacketQqueue = new Queue<PacketData>();
         private Thread receiveThread = null;
         private bool runReceiveThread = false;
         public ChatClient()
@@ -89,10 +88,6 @@ namespace ChatClient
                     if (packetBufferManager.Size() > 0)
                     {
                         PacketData packetData = packetBufferManager.ReadPacket();
-                        wasWorked = true;
-                    }
-                    if (receivePacketQqueue.Count() == 0)
-                    {
                         wasWorked = true;
                     }
                 } while (false);

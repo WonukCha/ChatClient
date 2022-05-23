@@ -27,6 +27,9 @@ namespace ChatClient
         private PacketBufferManager packetBufferManager = new PacketBufferManager();
         private Thread receiveThread = null;
         private bool runReceiveThread = false;
+
+        Dictionary<PacketDefine.PACKET_ID, Action<PacketData>> packetFuncDic = new Dictionary<PacketDefine.PACKET_ID, Action<PacketData>>();
+
         public ChatClient()
         {
             packetBufferManager.Init(1024,32,5);
@@ -39,6 +42,7 @@ namespace ChatClient
         {
             
         }
+
         public void Dispose()
         {
             runReceiveThread = false;
@@ -85,10 +89,12 @@ namespace ChatClient
             {
                 do
                 {
-                    if (packetBufferManager.Size() > 0)
+                    if (packetBufferManager.Size() > PacketDefine.HEDER_SIZE)
                     {
                         PacketData packetData = packetBufferManager.ReadPacket();
                         wasWorked = true;
+
+                        packetFuncDic[(PacketDefine.PACKET_ID)packetData.PacketID](packetData);
                     }
                 } while (false);
                 
@@ -100,6 +106,23 @@ namespace ChatClient
         }
         public bool Login(string id, string pw)
         {
+            LoginRequest loginRequest = new LoginRequest();
+            if(loginRequest.SetIdPw(id, pw))
+            {
+                PacketData packetData;
+                //packetData.DataSize = 0;
+                //packetData.PacketID = (Int16)PacketDefine.PACKET_ID.LOGIN_REQUEST;
+                //packetData.Type = 0;
+                //packetData.tickCount = (UInt64)Environment.TickCount;
+                //packetData.BodyData = loginRequest.ToBytes();
+                List<byte> datas = new List<byte>();
+                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + loginRequest.GetSize())));
+                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.LOGIN_REQUEST)));
+                datas.AddRange(new byte[] { (byte)0 });
+                datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
+                datas.AddRange(loginRequest.ToBytes());
+                SendData(datas.ToArray());
+            }
             return true;
         }
         public bool LogOut()
@@ -114,5 +137,65 @@ namespace ChatClient
         {
             return true;
         }
+
+        private void InitPacketFuncDic()
+        {
+            packetFuncDic.Add(PacketDefine.PACKET_ID.SYSYEM_DISCONNECT, PacketFunc_SystemDisconnect);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.SYSYEM_CONNECT, PacketFunc_SystemConnect);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.LOGIN_RESPONSE, PacketFunc_LoginResponse);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.ALL_USER_CHAT_RESPONSE, PacketFunc_AllUserChatResponse);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.ALL_USER_CHAT_NOTIFY, PacketFunc_AllUserChatNotify);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.ROOM_ENTER_RESPONSE, PacketFunc_RoomEnterResponse);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.ROOM_LEAVE_RESPONSE, PacketFunc_RoomLeaveResponse);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.ROOM_CHAT_RESPONSE, PacketFunc_RoomChatResponse);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.ROOM_CHAT_NOTIFY, PacketFunc_RoomChatNotify);
+        }
+
+        private void PacketFunc_SystemDisconnect(PacketData packetData) 
+        {
+            
+        }
+        private void PacketFunc_SystemConnect(PacketData packetData) 
+        {
+
+        }
+        private void PacketFunc_LoginResponse(PacketData packetData) 
+        {
+            LoginResponse loginResponse = new LoginResponse();
+            loginResponse.FromBytes(packetData.BodyData, 0);
+            if(loginResponse.result == 1)
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+        private void PacketFunc_AllUserChatResponse(PacketData packetData) 
+        {
+            
+        }
+        private void PacketFunc_AllUserChatNotify(PacketData packetData) 
+        {
+
+        }
+        private void PacketFunc_RoomEnterResponse(PacketData packetData) 
+        {
+
+        }
+        private void PacketFunc_RoomLeaveResponse(PacketData packetData) 
+        {
+
+        }
+        private void PacketFunc_RoomChatResponse(PacketData packetData) 
+        {
+
+        }
+        private void PacketFunc_RoomChatNotify(PacketData packetData) 
+        {
+
+        }
     }
 }
+ 

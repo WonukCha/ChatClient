@@ -8,10 +8,12 @@ namespace ChatClient.Client
 {
 	class PacketDefine
     {
+		public const UInt16 HEDER_SIZE = 13;
 		public const UInt16 CHAT_SIZE = 255 + 1;
 		public const UInt16 NAME_SIZE = 255 + 1;
 		public const UInt16 ID_SIZE = 255 + 1;
 		public const UInt16 PW_SIZE = 255 + 1;
+
 
 		enum COMPRESS_TYPE : byte
 		{
@@ -20,17 +22,16 @@ namespace ChatClient.Client
 			END
 		};
 
-		enum USER_STATUS_INFO : byte
+		public enum USER_STATUS_INFO : byte
 		{
 			NONE = 0,
 			DISCONECT,
 			CONNECT,
 			LOBBY,
 			ROOM,
-
 		};
 
-		enum PACKET_ID : UInt16
+		public enum PACKET_ID : UInt16
 		{
 			NONE,
 			SYSYEM_DISCONNECT = 100,

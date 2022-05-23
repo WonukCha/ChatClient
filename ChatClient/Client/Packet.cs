@@ -19,16 +19,16 @@ namespace ChatClient.Client.Packet
 	}
 
 	//Todo : Set,Get, FromByte, ToByte
-	class LoginRequest
+	public class LoginRequest
 	{
 		byte[] id = new byte[PacketDefine.ID_SIZE];
 		byte[] pw = new byte[PacketDefine.PW_SIZE];
 
 		public bool SetIdPw(string id, string pw)
-        {
+		{
 			bool bResult = false;
-			if(id.Length <= PacketDefine.ID_SIZE && pw.Length <= PacketDefine.PW_SIZE)
-            {
+			if (id.Length <= PacketDefine.ID_SIZE && pw.Length <= PacketDefine.PW_SIZE)
+			{
 				Encoding.UTF8.GetBytes(id).CopyTo(this.id, 0);
 				Encoding.UTF8.GetBytes(id).CopyTo(this.pw, 0);
 				bResult = true;
@@ -37,26 +37,28 @@ namespace ChatClient.Client.Packet
 		}
 
 		public byte[] ToBytes()
-        {
+		{
 			List<byte> data = new List<byte>();
 			data.AddRange(this.id);
 			data.AddRange(this.pw);
 			return data.ToArray();
 		}
-
-
+		public int GetSize()
+		{
+			return id.Length + pw.Length;
+		}
 	};
-	class LoginResponse
+	public class LoginResponse
 	{
-		Int16 result;
+		public Int16 result;
 
-		public void FromBytes(byte[] bodyData,int offset)
-        {
-			result = BitConverter.ToInt16(bodyData,	offset);
-        }
+		public void FromBytes(byte[] bodyData, int offset)
+		{
+			result = BitConverter.ToInt16(bodyData, offset);
+		}
 	};
 
-	class AllUserChatRequest
+	public class AllUserChatRequest
 	{
 		byte[] checkCode = new byte[PacketDefine.NAME_SIZE];
 		byte[] msg = new byte[PacketDefine.CHAT_SIZE];
@@ -80,41 +82,15 @@ namespace ChatClient.Client.Packet
 			return data.ToArray();
 		}
 	}
-	class AllUserChatResponse
+	public class AllUserChatResponse
 	{
 
 	};
 
-	class RoomEnterRequest
+	public class RoomEnterRequest
 	{
 		UInt16 roomNumber;
 
-		public bool SetRoomNumber(UInt16 roomNumber)
-        {
-			this.roomNumber = roomNumber;
-			return true;
-		}
-		public byte[] ToBytes()
-		{
-			List<byte> data = new List<byte>();
-			data.AddRange(BitConverter.GetBytes(roomNumber));
-			return data.ToArray();
-		}
-
-	};
-
-	class RoomEnterResponse
-	{
-		Int16 result = 0;
-		public void FromBytes(byte[] bodyData, int offset)
-		{
-			result = BitConverter.ToInt16(bodyData, offset);
-		}
-	};
-
-	class RoomLeaveRequest
-	{
-		UInt16 roomNumber;
 		public bool SetRoomNumber(UInt16 roomNumber)
 		{
 			this.roomNumber = roomNumber;
@@ -126,9 +102,10 @@ namespace ChatClient.Client.Packet
 			data.AddRange(BitConverter.GetBytes(roomNumber));
 			return data.ToArray();
 		}
+
 	};
 
-	class RoomLeaveResponse
+	public class RoomEnterResponse
 	{
 		Int16 result = 0;
 		public void FromBytes(byte[] bodyData, int offset)
@@ -137,7 +114,32 @@ namespace ChatClient.Client.Packet
 		}
 	};
 
-	class RoomChatRequest
+	public class RoomLeaveRequest
+	{
+		UInt16 roomNumber;
+		public bool SetRoomNumber(UInt16 roomNumber)
+		{
+			this.roomNumber = roomNumber;
+			return true;
+		}
+		public byte[] ToBytes()
+		{
+			List<byte> data = new List<byte>();
+			data.AddRange(BitConverter.GetBytes(roomNumber));
+			return data.ToArray();
+		}
+	};
+
+	public class RoomLeaveResponse
+	{
+		Int16 result = 0;
+		public void FromBytes(byte[] bodyData, int offset)
+		{
+			result = BitConverter.ToInt16(bodyData, offset);
+		}
+	};
+
+	public class RoomChatRequest
 	{
 		byte[] msg = new byte[PacketDefine.CHAT_SIZE];
 		public bool SetValue(string msg)
@@ -158,7 +160,7 @@ namespace ChatClient.Client.Packet
 		}
 	};
 
-	class RoomChatResponse
+	public class RoomChatResponse
 	{
 		Int16 result = 0;
 		public void FromBytes(byte[] bodyData, int offset)
@@ -167,7 +169,7 @@ namespace ChatClient.Client.Packet
 		}
 	};
 
-	class RoomChatNotify
+	public class RoomChatNotify
 	{
 		byte[] id = new byte[PacketDefine.ID_SIZE];
 		byte[] msg = new byte[PacketDefine.CHAT_SIZE];

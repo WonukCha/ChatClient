@@ -82,9 +82,23 @@ namespace ChatClient.Client.Packet
 			return data.ToArray();
 		}
 	}
-	public class AllUserChatResponse
+	public class AllUserChat
 	{
+		byte[] checkCode = new byte[PacketDefine.NAME_SIZE];
+		byte[] msg = new byte[PacketDefine.CHAT_SIZE];
 
+		public bool FromBytes(byte[] bodyData, int offset)
+		{
+			bool bIsResult = false;
+
+			if(bodyData.Length - offset == PacketDefine.NAME_SIZE + PacketDefine.CHAT_SIZE)
+            {
+				Buffer.BlockCopy(bodyData, offset, checkCode, 0, PacketDefine.NAME_SIZE);
+				Buffer.BlockCopy(bodyData, offset + PacketDefine.NAME_SIZE, msg, 0, PacketDefine.CHAT_SIZE);
+				bIsResult = true;
+			}
+			return bIsResult;
+		}
 	};
 
 	public class RoomEnterRequest
@@ -102,15 +116,24 @@ namespace ChatClient.Client.Packet
 			data.AddRange(BitConverter.GetBytes(roomNumber));
 			return data.ToArray();
 		}
-
+		public int GetSize()
+		{
+			return sizeof(UInt16);
+		}
 	};
 
 	public class RoomEnterResponse
 	{
 		Int16 result = 0;
-		public void FromBytes(byte[] bodyData, int offset)
+		public bool FromBytes(byte[] bodyData, int offset)
 		{
-			result = BitConverter.ToInt16(bodyData, offset);
+			bool bIsResult = false;
+			if(bodyData.Length - offset == sizeof(Int16))
+            {
+				result = BitConverter.ToInt16(bodyData, offset);
+				bIsResult = true;
+			}
+			return bIsResult;
 		}
 	};
 
@@ -133,9 +156,16 @@ namespace ChatClient.Client.Packet
 	public class RoomLeaveResponse
 	{
 		Int16 result = 0;
-		public void FromBytes(byte[] bodyData, int offset)
+		public bool FromBytes(byte[] bodyData, int offset)
 		{
-			result = BitConverter.ToInt16(bodyData, offset);
+			bool isResult = false;
+			if(bodyData.Length - offset == sizeof(Int16))
+            {
+				result = BitConverter.ToInt16(bodyData, offset);
+				isResult = true;
+			}
+			
+			return isResult;
 		}
 	};
 
@@ -158,14 +188,24 @@ namespace ChatClient.Client.Packet
 			data.AddRange(msg);
 			return data.ToArray();
 		}
+		public int GetSize()
+		{
+			return msg.Length;
+		}
 	};
 
 	public class RoomChatResponse
 	{
 		Int16 result = 0;
-		public void FromBytes(byte[] bodyData, int offset)
+		public bool FromBytes(byte[] bodyData, int offset)
 		{
-			result = BitConverter.ToInt16(bodyData, offset);
+			bool bIsResult = false;
+			if(bodyData.Length - offset == sizeof(Int16))
+            {
+				result = BitConverter.ToInt16(bodyData, offset);
+				bIsResult = true;
+			}
+			return bIsResult;
 		}
 	};
 
@@ -184,6 +224,18 @@ namespace ChatClient.Client.Packet
 			data.AddRange(id);
 			data.AddRange(msg);
 			return data.ToArray();
+		}
+		public bool FromBytes(byte[] bodyData, int offset)
+		{
+			bool bIsResult = false;
+
+			if (bodyData.Length - offset == PacketDefine.ID_SIZE + PacketDefine.CHAT_SIZE)
+			{
+				Buffer.BlockCopy(bodyData, offset, id, 0, PacketDefine.ID_SIZE);
+				Buffer.BlockCopy(bodyData, offset + PacketDefine.ID_SIZE, msg, 0, PacketDefine.CHAT_SIZE);
+				bIsResult = true;
+			}
+			return bIsResult;
 		}
 	};
 }

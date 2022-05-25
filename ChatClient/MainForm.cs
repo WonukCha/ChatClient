@@ -129,25 +129,19 @@ namespace ChatClient
             listViewNetwork.Items.Insert(0,item);
         }
 
-        private void button1_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void buttonLogin_Click(object sender, EventArgs e)
         {
-            //if (chatClinet.Login(textBoxId.Text, textBoxPw.Text) == false)
-            //    AddListViewItem("[Error] ID, PW");
+            chatClinet.Login(textBoxId.Text, textBoxPw.Text);
         }
 
         private void buttonRoomEnter_Click(object sender, EventArgs e)
         {
-
+            chatClinet.EnterRoom(0);
         }
 
         private void buttonChatEnter_Click(object sender, EventArgs e)
         {
-
+            chatClinet.SendChat(textBoxChat.Text);
         }
     }
 }

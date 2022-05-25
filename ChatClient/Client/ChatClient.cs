@@ -110,11 +110,6 @@ namespace ChatClient
             if(loginRequest.SetIdPw(id, pw))
             {
                 PacketData packetData;
-                //packetData.DataSize = 0;
-                //packetData.PacketID = (Int16)PacketDefine.PACKET_ID.LOGIN_REQUEST;
-                //packetData.Type = 0;
-                //packetData.tickCount = (UInt64)Environment.TickCount;
-                //packetData.BodyData = loginRequest.ToBytes();
                 List<byte> datas = new List<byte>();
                 datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + loginRequest.GetSize())));
                 datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.LOGIN_REQUEST)));
@@ -131,10 +126,32 @@ namespace ChatClient
         }
         public bool EnterRoom(uint roomNumber)
         {
+            RoomEnterRequest roomEnterRequest = new RoomEnterRequest();
+            roomEnterRequest.SetRoomNumber((ushort)roomNumber);
+
+            PacketData packetData;
+            List<byte> datas = new List<byte>();
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomEnterRequest.GetSize())));
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ROOM_ENTER_REQUEST)));
+            datas.AddRange(new byte[] { (byte)0 });
+            datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
+            datas.AddRange(roomEnterRequest.ToBytes());
+            SendData(datas.ToArray());
             return true;
         }
         public bool SendChat(string chat)
         {
+            RoomChatRequest roomChatRequest = new RoomChatRequest();
+            roomChatRequest.SetValue(chat);
+
+            PacketData packetData;
+            List<byte> datas = new List<byte>();
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomChatRequest.GetSize())));
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ROOM_CHAT_REQUEST)));
+            datas.AddRange(new byte[] { (byte)0 });
+            datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
+            datas.AddRange(roomChatRequest.ToBytes());
+            SendData(datas.ToArray());
             return true;
         }
 
@@ -153,7 +170,6 @@ namespace ChatClient
 
         private void PacketFunc_SystemDisconnect(PacketData packetData) 
         {
-            
         }
         private void PacketFunc_SystemConnect(PacketData packetData) 
         {
@@ -165,6 +181,56 @@ namespace ChatClient
             loginResponse.FromBytes(packetData.BodyData, 0);
             if(loginResponse.result == 1)
             {
+                //로그인 성공
+            }
+            else
+            {
+                //로그인 실패
+            }
+        }
+        private void PacketFunc_AllUserChatResponse(PacketData packetData) 
+        {
+
+            AllUserChat allUserChat = new AllUserChat();
+            if(allUserChat.FromBytes(packetData.BodyData, 0))
+            {
+                // AllUserChatResponse 수신 성공!~
+            }
+            else
+            {
+                // 실패실패
+            }
+
+        }
+        private void PacketFunc_AllUserChatNotify(PacketData packetData) 
+        {
+            RoomChatNotify roomChatNotify = new RoomChatNotify();
+            if(roomChatNotify.FromBytes(packetData.BodyData,0))
+            {
+                // AllUserChatResponse 수신 성공!~
+            }
+            else
+            {
+                // 실패실패
+            }
+        }
+        private void PacketFunc_RoomEnterResponse(PacketData packetData) 
+        {
+            RoomEnterResponse roomEnterResponse = new RoomEnterResponse();
+            if(roomEnterResponse.FromBytes(packetData.BodyData,0))
+            {
+                // AllUserChatResponse 수신 성공!~
+            }
+            else
+            {
+                // 실패실패
+            }
+        }
+        private void PacketFunc_RoomLeaveResponse(PacketData packetData) 
+        {
+            RoomLeaveResponse roomLeaveResponse = new RoomLeaveResponse();
+            if(roomLeaveResponse.FromBytes(packetData.BodyData,0))
+            {
 
             }
             else
@@ -172,29 +238,30 @@ namespace ChatClient
 
             }
         }
-        private void PacketFunc_AllUserChatResponse(PacketData packetData) 
-        {
-            
-        }
-        private void PacketFunc_AllUserChatNotify(PacketData packetData) 
-        {
-
-        }
-        private void PacketFunc_RoomEnterResponse(PacketData packetData) 
-        {
-
-        }
-        private void PacketFunc_RoomLeaveResponse(PacketData packetData) 
-        {
-
-        }
         private void PacketFunc_RoomChatResponse(PacketData packetData) 
         {
+            RoomChatResponse roomChatResponse = new RoomChatResponse();
+            if(roomChatResponse.FromBytes(packetData.BodyData,0))
+            {
+
+            }
+            else
+            {
+
+            }
 
         }
         private void PacketFunc_RoomChatNotify(PacketData packetData) 
         {
+            RoomChatNotify roomChatNotify =new RoomChatNotify();
+            if( roomChatNotify.FromBytes(packetData.BodyData,0))
+            {
 
+            }
+            else
+            {
+
+            }
         }
     }
 }

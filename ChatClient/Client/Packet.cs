@@ -10,9 +10,8 @@ namespace ChatClient.Client.Packet
 {
 	struct PacketData
 	{
-
-		public Int16 DataSize;
 		public Int16 PacketID;
+		public Int16 DataSize;
 		public SByte Type;
 		public UInt64 tickCount;
 		public byte[] BodyData;
@@ -63,7 +62,7 @@ namespace ChatClient.Client.Packet
 		byte[] checkCode = new byte[PacketDefine.NAME_SIZE];
 		byte[] msg = new byte[PacketDefine.CHAT_SIZE];
 
-		public bool SetIdPw(string checkCode, string msg)
+		public bool SetCodeMsg(string checkCode, string msg)
 		{
 			bool bResult = false;
 			if (checkCode.Length <= PacketDefine.NAME_SIZE && msg.Length <= PacketDefine.CHAT_SIZE)
@@ -81,24 +80,14 @@ namespace ChatClient.Client.Packet
 			data.AddRange(this.msg);
 			return data.ToArray();
 		}
-	}
-	public class AllUserChat
-	{
-		byte[] checkCode = new byte[PacketDefine.NAME_SIZE];
-		byte[] msg = new byte[PacketDefine.CHAT_SIZE];
-
-		public bool FromBytes(byte[] bodyData, int offset)
+		public int GetSize()
 		{
-			bool bIsResult = false;
-
-			if(bodyData.Length - offset == PacketDefine.NAME_SIZE + PacketDefine.CHAT_SIZE)
-            {
-				Buffer.BlockCopy(bodyData, offset, checkCode, 0, PacketDefine.NAME_SIZE);
-				Buffer.BlockCopy(bodyData, offset + PacketDefine.NAME_SIZE, msg, 0, PacketDefine.CHAT_SIZE);
-				bIsResult = true;
-			}
-			return bIsResult;
+			return checkCode.Length + msg.Length;
 		}
+	}
+	public class AllUserChatResponse
+	{
+		
 	};
 
 	public class RoomEnterRequest
@@ -236,6 +225,14 @@ namespace ChatClient.Client.Packet
 				bIsResult = true;
 			}
 			return bIsResult;
+		}
+		public string GetId()
+        {
+			return Encoding.Default.GetString(id);
+		}
+		public string GetMsg()
+		{
+			return Encoding.Default.GetString(msg);
 		}
 	};
 }

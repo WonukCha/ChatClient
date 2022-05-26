@@ -24,9 +24,9 @@ namespace ChatClient.Client
             if (Size() > mHeaderSize)
             {
                 Read(heder, 0, mHeaderSize, false);
-                packetData.DataSize = BitConverter.ToInt16(heder, 0);
+                packetData.PacketID = BitConverter.ToInt16(heder, 0);
+                packetData.DataSize = BitConverter.ToInt16(heder, 2);
                 packetData.DataSize -= mHeaderSize;
-                packetData.PacketID = BitConverter.ToInt16(heder, 2);
                 packetData.Type = (SByte)heder[4];
                 if(packetData.DataSize <= Size())
                 {

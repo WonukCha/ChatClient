@@ -13,7 +13,7 @@ namespace ChatClient
     public delegate void DOnDisconnect();
     public delegate void DOnReceive(byte[] bytes, int size);
     public delegate void DOnSend(byte[] bytes, int size);
-    public delegate void DReceiveChat(string chat);
+    public delegate void DReceiveChat(string user, string chat);
     public delegate void DResponse();
 
     class ChatClient : TcpSocketClient
@@ -22,7 +22,7 @@ namespace ChatClient
         public event DOnDisconnect eOnDisconnect;
         public event DOnReceive eOnReceive;
         public event DOnSend eOnSend;
-        public event DReceiveChat eReceiveCommand;
+        public event DReceiveChat eReceiveChat;
 
         private PacketBufferManager packetBufferManager = new PacketBufferManager();
         private Thread receiveThread = null;
@@ -32,7 +32,9 @@ namespace ChatClient
 
         public ChatClient()
         {
-            packetBufferManager.Init(1024,32,5);
+            InitPacketFuncDic();
+
+            packetBufferManager.Init(1024,500,13);
             runReceiveThread = true;
             receiveThread = new Thread(ReceiveProcess);
             receiveThread.Name = "receiveThread";
@@ -73,7 +75,7 @@ namespace ChatClient
             {
                 eOnReceive(bytes, size);
             }
-            packetBufferManager.Write(bytes, 0, bytes.Length);
+            packetBufferManager.Write(bytes, 0, size);
         }
         public override void OnSend(byte[] bytes, int size) 
         {
@@ -93,7 +95,7 @@ namespace ChatClient
                     {
                         PacketData packetData = packetBufferManager.ReadPacket();
                         wasWorked = true;
-
+                        
                         packetFuncDic[(PacketDefine.PACKET_ID)packetData.PacketID](packetData);
                     }
                 } while (false);
@@ -111,8 +113,8 @@ namespace ChatClient
             {
                 PacketData packetData;
                 List<byte> datas = new List<byte>();
-                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + loginRequest.GetSize())));
                 datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.LOGIN_REQUEST)));
+                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + loginRequest.GetSize())));
                 datas.AddRange(new byte[] { (byte)0 });
                 datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
                 datas.AddRange(loginRequest.ToBytes());
@@ -131,8 +133,8 @@ namespace ChatClient
 
             PacketData packetData;
             List<byte> datas = new List<byte>();
-            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomEnterRequest.GetSize())));
             datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ROOM_ENTER_REQUEST)));
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomEnterRequest.GetSize())));
             datas.AddRange(new byte[] { (byte)0 });
             datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
             datas.AddRange(roomEnterRequest.ToBytes());
@@ -141,18 +143,38 @@ namespace ChatClient
         }
         public bool SendChat(string chat)
         {
-            RoomChatRequest roomChatRequest = new RoomChatRequest();
-            roomChatRequest.SetValue(chat);
+            //RoomChatRequest roomChatRequest = new RoomChatRequest();
+            //roomChatRequest.SetValue(chat);
+            //
+            //List<byte> datas = new List<byte>();
+            //datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ROOM_CHAT_REQUEST)));
+            //datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomChatRequest.GetSize())));
+            //datas.AddRange(new byte[] { (byte)0 });
+            //datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
+            //datas.AddRange(roomChatRequest.ToBytes());
+            //SendData(datas.ToArray());
 
-            PacketData packetData;
-            List<byte> datas = new List<byte>();
-            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomChatRequest.GetSize())));
-            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ROOM_CHAT_REQUEST)));
-            datas.AddRange(new byte[] { (byte)0 });
-            datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
-            datas.AddRange(roomChatRequest.ToBytes());
-            SendData(datas.ToArray());
-            return true;
+            bool bResult = false;
+            if(IsConnected())
+            {
+                AllUserChatRequest allUserChatRequest = new AllUserChatRequest();
+                allUserChatRequest.SetCodeMsg("", chat);
+
+                List<byte> datas = new List<byte>();
+                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ALL_USER_CHAT_REQUEST)));
+                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + allUserChatRequest.GetSize())));
+                datas.AddRange(new byte[] { (byte)0 });
+                datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
+                datas.AddRange(allUserChatRequest.ToBytes());
+                SendData(datas.ToArray());
+                bResult = true;
+            }
+            else
+            {
+                bResult = false;
+            }
+            
+            return bResult;
         }
 
         private void InitPacketFuncDic()
@@ -190,17 +212,12 @@ namespace ChatClient
         }
         private void PacketFunc_AllUserChatResponse(PacketData packetData) 
         {
-
-            AllUserChat allUserChat = new AllUserChat();
-            if(allUserChat.FromBytes(packetData.BodyData, 0))
+            AllUserChatResponse allUserChatResponse = new AllUserChatResponse();
+            // 서버가 수신했다~
+            if(eReceiveChat != null)
             {
-                // AllUserChatResponse 수신 성공!~
+                eReceiveChat("나얏", "송신성공");
             }
-            else
-            {
-                // 실패실패
-            }
-
         }
         private void PacketFunc_AllUserChatNotify(PacketData packetData) 
         {
@@ -208,6 +225,10 @@ namespace ChatClient
             if(roomChatNotify.FromBytes(packetData.BodyData,0))
             {
                 // AllUserChatResponse 수신 성공!~
+                if (eReceiveChat != null)
+                {
+                    eReceiveChat(roomChatNotify.GetId(), roomChatNotify.GetMsg());
+                }
             }
             else
             {

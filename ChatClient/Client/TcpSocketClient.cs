@@ -15,7 +15,7 @@ namespace ChatClient
     {
         private string lastErrorMsg;
 
-        private const int READ_TIMEOUT_SEC = 3;
+        private const int READ_TIMEOUT_SEC = 60;
         private const int MAX_QUEUE_SIZE = 100;
         private const int MAX_BUFFER_SIZE = 1024;
 
@@ -44,6 +44,10 @@ namespace ChatClient
         public void Dispose()
         {
             StopThread();
+        }
+        public bool IsConnected()
+        {
+            return tcpClient.Connected;
         }
 
         public bool Connect(string ip, int port)

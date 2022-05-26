@@ -33,6 +33,7 @@ namespace ChatClient
             chatClinet.eOnDisconnect += OnDisconnect;
             chatClinet.eOnReceive += OnReceive;
             chatClinet.eOnSend += OnSend;
+            chatClinet.eReceiveChat += OnReceiveChat;
 
         }
         private void pictureBoxClose_Click(object sender, EventArgs e)
@@ -97,6 +98,14 @@ namespace ChatClient
                 AddListViewItem(bytes);
             }));
         }
+        public void OnReceiveChat(string id, string msg)
+        {
+            this.Invoke(new Action(delegate ()
+            {
+                InsertChatList(id, msg);
+            }));
+        }
+        
         private void InitListview()
         {
             listViewNetwork.View = View.Details;
@@ -106,6 +115,11 @@ namespace ChatClient
 
             listViewRoom.View = View.Details;
             listViewRoom.Columns.Add("RoomNumber", 300);
+
+            listViewChat.View = View.Details;
+            listViewChat.Columns.Add("Time", 100);
+            listViewChat.Columns.Add("User", 100);
+            listViewChat.Columns.Add("Msg", 400);
         }
         private void AddListViewItem(byte[] bytes)
         {
@@ -142,6 +156,12 @@ namespace ChatClient
         private void buttonChatEnter_Click(object sender, EventArgs e)
         {
             chatClinet.SendChat(textBoxChat.Text);
+        }
+        private void InsertChatList(string user, string msg)
+        {
+            string datetime = DateTime.Now.ToString("hh:mm:ss tt");
+            ListViewItem item = new ListViewItem(new string[] { datetime, user, msg });
+            listViewChat.Items.Add(item);
         }
     }
 }

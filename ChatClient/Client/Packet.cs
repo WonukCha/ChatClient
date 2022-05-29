@@ -29,7 +29,7 @@ namespace ChatClient.Client.Packet
 			if (id.Length <= PacketDefine.ID_SIZE && pw.Length <= PacketDefine.PW_SIZE)
 			{
 				Encoding.UTF8.GetBytes(id).CopyTo(this.id, 0);
-				Encoding.UTF8.GetBytes(id).CopyTo(this.pw, 0);
+				Encoding.UTF8.GetBytes(pw).CopyTo(this.pw, 0);
 				bResult = true;
 			}
 			return bResult;
@@ -113,7 +113,7 @@ namespace ChatClient.Client.Packet
 
 	public class RoomEnterResponse
 	{
-		Int16 result = 0;
+		public Int16 result { set; get; }
 		public bool FromBytes(byte[] bodyData, int offset)
 		{
 			bool bIsResult = false;
@@ -140,11 +140,15 @@ namespace ChatClient.Client.Packet
 			data.AddRange(BitConverter.GetBytes(roomNumber));
 			return data.ToArray();
 		}
+		public int GetSize()
+		{
+			return sizeof(UInt16);
+		}
 	};
 
 	public class RoomLeaveResponse
 	{
-		Int16 result = 0;
+		public Int16 result { set; get; }
 		public bool FromBytes(byte[] bodyData, int offset)
 		{
 			bool isResult = false;

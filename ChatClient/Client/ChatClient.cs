@@ -6,39 +6,48 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using static ChatClient.Client.PacketDefine;
 
 namespace ChatClient
 {
+
     public delegate void DOnConnect(string ip, int port);
     public delegate void DOnDisconnect();
     public delegate void DOnReceive(byte[] bytes, int size);
     public delegate void DOnSend(byte[] bytes, int size);
     public delegate void DReceiveChat(string user, string chat);
     public delegate void DResponse();
+    public delegate void DSystemInfo(string msg);
+    public delegate void DUserType(USER_STATUS_INFO type);
 
     class ChatClient : TcpSocketClient
     {
-        public event DOnConnect eOnConnect;
-        public event DOnDisconnect eOnDisconnect;
-        public event DOnReceive eOnReceive;
-        public event DOnSend eOnSend;
-        public event DReceiveChat eReceiveChat;
+        public event DOnConnect _eOnConnect;
+        public event DOnDisconnect _eOnDisconnect;
+        public event DOnReceive _eOnReceive;
+        public event DOnSend _eOnSend;
+        public event DReceiveChat _eReceiveChat;
+        public event DSystemInfo _eSystemInfo;
+        public event DUserType _eUserType;
 
-        private PacketBufferManager packetBufferManager = new PacketBufferManager();
-        private Thread receiveThread = null;
-        private bool runReceiveThread = false;
+
+        private PacketBufferManager _packetBufferManager = new PacketBufferManager();
+        private Thread _receiveThread = null;
+        private bool _runReceiveThread = false;
 
         Dictionary<PacketDefine.PACKET_ID, Action<PacketData>> packetFuncDic = new Dictionary<PacketDefine.PACKET_ID, Action<PacketData>>();
+
+        UInt16 _roomNumber = 0;
 
         public ChatClient()
         {
             InitPacketFuncDic();
 
-            packetBufferManager.Init(1024,500,13);
-            runReceiveThread = true;
-            receiveThread = new Thread(ReceiveProcess);
-            receiveThread.Name = "receiveThread";
-            receiveThread.Start();
+            _packetBufferManager.Init(1024,500,13);
+            _runReceiveThread = true;
+            _receiveThread = new Thread(ReceiveProcess);
+            _receiveThread.Name = "receiveThread";
+            _receiveThread.Start();
         }
         ~ChatClient()
         {
@@ -47,53 +56,67 @@ namespace ChatClient
 
         public void Dispose()
         {
-            runReceiveThread = false;
-            if (receiveThread != null)
+            _runReceiveThread = false;
+            if (_receiveThread != null)
             {
-                receiveThread.Join();
+                _receiveThread.Join();
             }
             base.Dispose();
         }
 
         public override void OnConnect(string ip, int port) 
         {
-            if(eOnConnect != null)
+            if(_eOnConnect != null)
             {
-                eOnConnect(ip,port);
+                _eOnConnect(ip,port);
             }
         }
         public override void OnDisconnect() 
         {
-            if (eOnDisconnect != null)
+            if (_eOnDisconnect != null)
             {
-                eOnDisconnect();
+                _eOnDisconnect();
             }
         }
         public override void OnReceive(byte[] bytes, int size) 
         {
-            if (eOnReceive != null)
+            if (_eOnReceive != null)
             {
-                eOnReceive(bytes, size);
+                _eOnReceive(bytes, size);
             }
-            packetBufferManager.Write(bytes, 0, size);
+            _packetBufferManager.Write(bytes, 0, size);
         }
         public override void OnSend(byte[] bytes, int size) 
         {
-            if (eOnSend != null)
+            if (_eOnSend != null)
             {
-                eOnSend(bytes, size);
+                _eOnSend(bytes, size);
+            }
+        }
+        private void SystemInfo(string msg)
+        {
+            if(_eSystemInfo != null)
+            {
+                _eSystemInfo(msg);
+            }
+        }
+        private void UserType(USER_STATUS_INFO type)
+        {
+            if (_eUserType != null)
+            {
+                _eUserType(type);
             }
         }
         private void ReceiveProcess()
         {
             bool wasWorked = false;
-            while (runReceiveThread)
+            while (_runReceiveThread)
             {
                 do
                 {
-                    if (packetBufferManager.Size() > PacketDefine.HEDER_SIZE)
+                    if (_packetBufferManager.Size() > PacketDefine.HEDER_SIZE)
                     {
-                        PacketData packetData = packetBufferManager.ReadPacket();
+                        PacketData packetData = _packetBufferManager.ReadPacket();
                         wasWorked = true;
                         
                         packetFuncDic[(PacketDefine.PACKET_ID)packetData.PacketID](packetData);
@@ -141,19 +164,24 @@ namespace ChatClient
             SendData(datas.ToArray());
             return true;
         }
-        public bool SendChat(string chat)
-        {
-            //RoomChatRequest roomChatRequest = new RoomChatRequest();
-            //roomChatRequest.SetValue(chat);
-            //
-            //List<byte> datas = new List<byte>();
-            //datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ROOM_CHAT_REQUEST)));
-            //datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomChatRequest.GetSize())));
-            //datas.AddRange(new byte[] { (byte)0 });
-            //datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
-            //datas.AddRange(roomChatRequest.ToBytes());
-            //SendData(datas.ToArray());
 
+        public bool LeaveRoom()
+        {
+            RoomLeaveRequest roomLeaveRequest = new RoomLeaveRequest();
+            roomLeaveRequest.SetRoomNumber(_roomNumber);
+
+            PacketData packetData;
+            List<byte> datas = new List<byte>();
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ROOM_LEAVE_REQUEST)));
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomLeaveRequest.GetSize())));
+            datas.AddRange(new byte[] { (byte)0 });
+            datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
+            datas.AddRange(roomLeaveRequest.ToBytes());
+            SendData(datas.ToArray());
+            return true;
+        }
+            public bool SendChat(string chat)
+        {
             bool bResult = false;
             if(IsConnected())
             {
@@ -203,36 +231,30 @@ namespace ChatClient
             loginResponse.FromBytes(packetData.BodyData, 0);
             if(loginResponse.result == 1)
             {
-                //로그인 성공
+                SystemInfo("Login Success");
+                UserType(USER_STATUS_INFO.LOBBY);
             }
             else
             {
-                //로그인 실패
+                SystemInfo("Login fail");
+                UserType(USER_STATUS_INFO.CONNECT);
             }
         }
         private void PacketFunc_AllUserChatResponse(PacketData packetData) 
         {
             AllUserChatResponse allUserChatResponse = new AllUserChatResponse();
-            // 서버가 수신했다~
-            if(eReceiveChat != null)
-            {
-                eReceiveChat("나얏", "송신성공");
-            }
+            SystemInfo("Receive All User Chat");
+
         }
         private void PacketFunc_AllUserChatNotify(PacketData packetData) 
         {
             RoomChatNotify roomChatNotify = new RoomChatNotify();
             if(roomChatNotify.FromBytes(packetData.BodyData,0))
             {
-                // AllUserChatResponse 수신 성공!~
-                if (eReceiveChat != null)
+                if (_eReceiveChat != null)
                 {
-                    eReceiveChat(roomChatNotify.GetId(), roomChatNotify.GetMsg());
+                    _eReceiveChat(roomChatNotify.GetId(), roomChatNotify.GetMsg());
                 }
-            }
-            else
-            {
-                // 실패실패
             }
         }
         private void PacketFunc_RoomEnterResponse(PacketData packetData) 
@@ -240,11 +262,14 @@ namespace ChatClient
             RoomEnterResponse roomEnterResponse = new RoomEnterResponse();
             if(roomEnterResponse.FromBytes(packetData.BodyData,0))
             {
-                // AllUserChatResponse 수신 성공!~
-            }
-            else
-            {
-                // 실패실패
+                if(roomEnterResponse.result == 1)
+                {
+                    UserType(USER_STATUS_INFO.ROOM);
+                }
+                else
+                {
+                    UserType(USER_STATUS_INFO.LOBBY);
+                }
             }
         }
         private void PacketFunc_RoomLeaveResponse(PacketData packetData) 
@@ -252,11 +277,14 @@ namespace ChatClient
             RoomLeaveResponse roomLeaveResponse = new RoomLeaveResponse();
             if(roomLeaveResponse.FromBytes(packetData.BodyData,0))
             {
+                if(roomLeaveResponse.result == 1)
+                {
+                    UserType(USER_STATUS_INFO.LOBBY);
+                }
+                else
+                {
 
-            }
-            else
-            {
-
+                }
             }
         }
         private void PacketFunc_RoomChatResponse(PacketData packetData) 

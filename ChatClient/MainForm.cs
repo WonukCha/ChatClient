@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-
+using static ChatClient.Client.PacketDefine;
 
 namespace ChatClient
 {
@@ -21,25 +21,26 @@ namespace ChatClient
         [DllImportAttribute("user32.dll")]
         public static extern bool ReleaseCapture();
 
-        ChatClient chatClinet = null;
+        ChatClient _chatClinet = null;
 
         public MainForm()
         {
             InitializeComponent();
-
             InitListview();
-            chatClinet = new ChatClient();
-            chatClinet.eOnConnect += OnConnect;
-            chatClinet.eOnDisconnect += OnDisconnect;
-            chatClinet.eOnReceive += OnReceive;
-            chatClinet.eOnSend += OnSend;
-            chatClinet.eReceiveChat += OnReceiveChat;
+            _chatClinet = new ChatClient();
+            _chatClinet._eOnConnect += OnConnect;
+            _chatClinet._eOnDisconnect += OnDisconnect;
+            _chatClinet._eOnReceive += OnReceive;
+            _chatClinet._eOnSend += OnSend;
+            _chatClinet._eReceiveChat += OnReceiveChat;
+            _chatClinet._eSystemInfo += OnSysyemInfo;
+            _chatClinet._eUserType += OnUserType;
 
         }
         private void pictureBoxClose_Click(object sender, EventArgs e)
         {
-            chatClinet.Dispose();
-            chatClinet = null;
+            _chatClinet.Dispose();
+            _chatClinet = null;
             this.Close();
         }
 
@@ -56,12 +57,12 @@ namespace ChatClient
         {
             string ip = textBoxIP.Text;
             int port = int.Parse(textBoxPort.Text);
-            chatClinet.Connect(ip,port);
+            _chatClinet.Connect(ip,port);
         }
 
         private void buttonDisconnect_Click(object sender, EventArgs e)
         {
-            chatClinet.Disonnect();
+            _chatClinet.Disonnect();
 
         }
         public void OnConnect(string ip, int port)
@@ -105,16 +106,46 @@ namespace ChatClient
                 InsertChatList(id, msg);
             }));
         }
-        
+        public void OnSysyemInfo(string msg)
+        {
+            this.Invoke(new Action(delegate ()
+            {
+                AddListViewItem(msg);
+            }));
+        }
+        public void OnUserType(USER_STATUS_INFO type)
+        {
+            this.Invoke(new Action(delegate ()
+            {
+                switch (type)
+                {
+                    case USER_STATUS_INFO.NONE:
+                        labelUserStatus.Text = "NONE";
+                        break;
+                    case USER_STATUS_INFO.DISCONECT:
+                        labelUserStatus.Text = "DISCONECT";
+                        break;
+                    case USER_STATUS_INFO.CONNECT:
+                        labelUserStatus.Text = "CONNECT";
+                        break;
+                    case USER_STATUS_INFO.LOBBY:
+                        labelUserStatus.Text = "LOBBY";
+                        break;
+                    case USER_STATUS_INFO.ROOM:
+                        labelUserStatus.Text = "ROOM";
+                        break;
+                    default:
+                        labelUserStatus.Text = "ERROR";
+                        break;
+                }
+            }));
+        }
         private void InitListview()
         {
             listViewNetwork.View = View.Details;
             listViewNetwork.Columns.Add("Time",100);
             listViewNetwork.Columns.Add("Size", 100);
             listViewNetwork.Columns.Add("Data", 400);
-
-            listViewRoom.View = View.Details;
-            listViewRoom.Columns.Add("RoomNumber", 300);
 
             listViewChat.View = View.Details;
             listViewChat.Columns.Add("Time", 100);
@@ -145,17 +176,25 @@ namespace ChatClient
 
         private void buttonLogin_Click(object sender, EventArgs e)
         {
-            chatClinet.Login(textBoxId.Text, textBoxPw.Text);
+            _chatClinet.Login(textBoxId.Text, textBoxPw.Text);
         }
 
         private void buttonRoomEnter_Click(object sender, EventArgs e)
         {
-            chatClinet.EnterRoom(0);
+            int roomNum = int.Parse(textBoxRoomNumber.Text);
+            if(roomNum > 0)
+            {
+                _chatClinet.EnterRoom((uint)roomNum);
+            }
+        }
+        private void buttonRoomLeave_Click(object sender, EventArgs e)
+        {
+            _chatClinet.LeaveRoom();
         }
 
         private void buttonChatEnter_Click(object sender, EventArgs e)
         {
-            chatClinet.SendChat(textBoxChat.Text);
+            _chatClinet.SendChat(textBoxChat.Text);
         }
         private void InsertChatList(string user, string msg)
         {
@@ -163,5 +202,11 @@ namespace ChatClient
             ListViewItem item = new ListViewItem(new string[] { datetime, user, msg });
             listViewChat.Items.Add(item);
         }
+
+        private void buttonLogout_Click(object sender, EventArgs e)
+        {
+
+        }
+
     }
 }

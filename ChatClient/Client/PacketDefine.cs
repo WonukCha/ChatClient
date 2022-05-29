@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ChatClient.Client
 {
-	class PacketDefine
+	public class PacketDefine
     {
 		public const UInt16 HEDER_SIZE = 13;
 		public const UInt16 CHAT_SIZE = 255 + 1;
@@ -15,7 +15,7 @@ namespace ChatClient.Client
 		public const UInt16 PW_SIZE = 255 + 1;
 
 
-		enum COMPRESS_TYPE : byte
+		public enum COMPRESS_TYPE : byte
 		{
 			NONE = 0,
 			ZLIB,

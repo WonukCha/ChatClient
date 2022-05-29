@@ -33,6 +33,14 @@
             this.pictureBoxClose = new System.Windows.Forms.PictureBox();
             this.labelTitle = new System.Windows.Forms.Label();
             this.panelMain = new System.Windows.Forms.Panel();
+            this.buttonRoomLeave = new System.Windows.Forms.Button();
+            this.textBoxRoomNumber = new System.Windows.Forms.TextBox();
+            this.buttonChatEnter = new System.Windows.Forms.Button();
+            this.textBoxChat = new System.Windows.Forms.TextBox();
+            this.listViewChat = new System.Windows.Forms.ListView();
+            this.buttonRoomEnter = new System.Windows.Forms.Button();
+            this.labelRoomNumber = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.buttonLogout = new System.Windows.Forms.Button();
             this.buttonLogin = new System.Windows.Forms.Button();
             this.textBoxPw = new System.Windows.Forms.TextBox();
@@ -48,13 +56,8 @@
             this.textBoxIP = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.listViewRoom = new System.Windows.Forms.ListView();
-            this.label6 = new System.Windows.Forms.Label();
-            this.labelRoomNumber = new System.Windows.Forms.Label();
-            this.buttonRoomEnter = new System.Windows.Forms.Button();
-            this.listViewChat = new System.Windows.Forms.ListView();
-            this.textBoxChat = new System.Windows.Forms.TextBox();
-            this.buttonChatEnter = new System.Windows.Forms.Button();
+            this.label7 = new System.Windows.Forms.Label();
+            this.labelUserStatus = new System.Windows.Forms.Label();
             this.panelTitle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClose)).BeginInit();
             this.panelMain.SuspendLayout();
@@ -67,7 +70,7 @@
             this.panelTitle.Controls.Add(this.labelTitle);
             this.panelTitle.Dock = System.Windows.Forms.DockStyle.Top;
             this.panelTitle.Location = new System.Drawing.Point(0, 0);
-            this.panelTitle.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelTitle.Margin = new System.Windows.Forms.Padding(2);
             this.panelTitle.Name = "panelTitle";
             this.panelTitle.Size = new System.Drawing.Size(646, 25);
             this.panelTitle.TabIndex = 0;
@@ -77,7 +80,7 @@
             // 
             this.pictureBoxClose.Image = ((System.Drawing.Image)(resources.GetObject("pictureBoxClose.Image")));
             this.pictureBoxClose.Location = new System.Drawing.Point(617, 4);
-            this.pictureBoxClose.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.pictureBoxClose.Margin = new System.Windows.Forms.Padding(2);
             this.pictureBoxClose.Name = "pictureBoxClose";
             this.pictureBoxClose.Size = new System.Drawing.Size(23, 18);
             this.pictureBoxClose.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -99,13 +102,16 @@
             // 
             // panelMain
             // 
+            this.panelMain.Controls.Add(this.labelUserStatus);
+            this.panelMain.Controls.Add(this.label7);
+            this.panelMain.Controls.Add(this.buttonRoomLeave);
+            this.panelMain.Controls.Add(this.textBoxRoomNumber);
             this.panelMain.Controls.Add(this.buttonChatEnter);
             this.panelMain.Controls.Add(this.textBoxChat);
             this.panelMain.Controls.Add(this.listViewChat);
             this.panelMain.Controls.Add(this.buttonRoomEnter);
             this.panelMain.Controls.Add(this.labelRoomNumber);
             this.panelMain.Controls.Add(this.label6);
-            this.panelMain.Controls.Add(this.listViewRoom);
             this.panelMain.Controls.Add(this.buttonLogout);
             this.panelMain.Controls.Add(this.buttonLogin);
             this.panelMain.Controls.Add(this.textBoxPw);
@@ -122,25 +128,111 @@
             this.panelMain.Controls.Add(this.label3);
             this.panelMain.Controls.Add(this.label4);
             this.panelMain.Location = new System.Drawing.Point(0, 25);
-            this.panelMain.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.panelMain.Margin = new System.Windows.Forms.Padding(2);
             this.panelMain.Name = "panelMain";
             this.panelMain.Size = new System.Drawing.Size(646, 650);
             this.panelMain.TabIndex = 1;
             // 
+            // buttonRoomLeave
+            // 
+            this.buttonRoomLeave.Location = new System.Drawing.Point(492, 311);
+            this.buttonRoomLeave.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonRoomLeave.Name = "buttonRoomLeave";
+            this.buttonRoomLeave.Size = new System.Drawing.Size(149, 39);
+            this.buttonRoomLeave.TabIndex = 29;
+            this.buttonRoomLeave.Text = "Leave";
+            this.buttonRoomLeave.UseVisualStyleBackColor = true;
+            this.buttonRoomLeave.Click += new System.EventHandler(this.buttonRoomLeave_Click);
+            // 
+            // textBoxRoomNumber
+            // 
+            this.textBoxRoomNumber.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxRoomNumber.Location = new System.Drawing.Point(491, 264);
+            this.textBoxRoomNumber.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxRoomNumber.Name = "textBoxRoomNumber";
+            this.textBoxRoomNumber.Size = new System.Drawing.Size(149, 43);
+            this.textBoxRoomNumber.TabIndex = 28;
+            // 
+            // buttonChatEnter
+            // 
+            this.buttonChatEnter.Location = new System.Drawing.Point(552, 584);
+            this.buttonChatEnter.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonChatEnter.Name = "buttonChatEnter";
+            this.buttonChatEnter.Size = new System.Drawing.Size(92, 43);
+            this.buttonChatEnter.TabIndex = 27;
+            this.buttonChatEnter.Text = "Enter";
+            this.buttonChatEnter.UseVisualStyleBackColor = true;
+            this.buttonChatEnter.Click += new System.EventHandler(this.buttonChatEnter_Click);
+            // 
+            // textBoxChat
+            // 
+            this.textBoxChat.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.textBoxChat.Location = new System.Drawing.Point(7, 584);
+            this.textBoxChat.Margin = new System.Windows.Forms.Padding(2);
+            this.textBoxChat.Name = "textBoxChat";
+            this.textBoxChat.Size = new System.Drawing.Size(541, 43);
+            this.textBoxChat.TabIndex = 26;
+            // 
+            // listViewChat
+            // 
+            this.listViewChat.HideSelection = false;
+            this.listViewChat.Location = new System.Drawing.Point(7, 352);
+            this.listViewChat.Margin = new System.Windows.Forms.Padding(2);
+            this.listViewChat.Name = "listViewChat";
+            this.listViewChat.Size = new System.Drawing.Size(637, 228);
+            this.listViewChat.TabIndex = 25;
+            this.listViewChat.UseCompatibleStateImageBehavior = false;
+            // 
+            // buttonRoomEnter
+            // 
+            this.buttonRoomEnter.Location = new System.Drawing.Point(332, 311);
+            this.buttonRoomEnter.Margin = new System.Windows.Forms.Padding(2);
+            this.buttonRoomEnter.Name = "buttonRoomEnter";
+            this.buttonRoomEnter.Size = new System.Drawing.Size(149, 39);
+            this.buttonRoomEnter.TabIndex = 24;
+            this.buttonRoomEnter.Text = "Enter";
+            this.buttonRoomEnter.UseVisualStyleBackColor = true;
+            this.buttonRoomEnter.Click += new System.EventHandler(this.buttonRoomEnter_Click);
+            // 
+            // labelRoomNumber
+            // 
+            this.labelRoomNumber.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelRoomNumber.ForeColor = System.Drawing.Color.White;
+            this.labelRoomNumber.Location = new System.Drawing.Point(337, 264);
+            this.labelRoomNumber.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelRoomNumber.Name = "labelRoomNumber";
+            this.labelRoomNumber.Size = new System.Drawing.Size(149, 43);
+            this.labelRoomNumber.TabIndex = 23;
+            this.labelRoomNumber.Text = "-";
+            this.labelRoomNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label6
+            // 
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.ForeColor = System.Drawing.Color.White;
+            this.label6.Location = new System.Drawing.Point(337, 224);
+            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(119, 36);
+            this.label6.TabIndex = 22;
+            this.label6.Text = "ROOM";
+            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // buttonLogout
             // 
-            this.buttonLogout.Location = new System.Drawing.Point(169, 274);
-            this.buttonLogout.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonLogout.Location = new System.Drawing.Point(170, 311);
+            this.buttonLogout.Margin = new System.Windows.Forms.Padding(2);
             this.buttonLogout.Name = "buttonLogout";
             this.buttonLogout.Size = new System.Drawing.Size(149, 39);
             this.buttonLogout.TabIndex = 20;
             this.buttonLogout.Text = "Logout";
             this.buttonLogout.UseVisualStyleBackColor = true;
+            this.buttonLogout.Click += new System.EventHandler(this.buttonLogout_Click);
             // 
             // buttonLogin
             // 
-            this.buttonLogin.Location = new System.Drawing.Point(7, 274);
-            this.buttonLogin.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonLogin.Location = new System.Drawing.Point(8, 311);
+            this.buttonLogin.Margin = new System.Windows.Forms.Padding(2);
             this.buttonLogin.Name = "buttonLogin";
             this.buttonLogin.Size = new System.Drawing.Size(149, 39);
             this.buttonLogin.TabIndex = 19;
@@ -151,8 +243,8 @@
             // textBoxPw
             // 
             this.textBoxPw.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxPw.Location = new System.Drawing.Point(78, 227);
-            this.textBoxPw.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxPw.Location = new System.Drawing.Point(79, 264);
+            this.textBoxPw.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxPw.Name = "textBoxPw";
             this.textBoxPw.Size = new System.Drawing.Size(240, 43);
             this.textBoxPw.TabIndex = 18;
@@ -161,7 +253,7 @@
             // 
             this.label5.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.ForeColor = System.Drawing.Color.White;
-            this.label5.Location = new System.Drawing.Point(-2, 231);
+            this.label5.Location = new System.Drawing.Point(-1, 268);
             this.label5.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(77, 36);
@@ -172,8 +264,8 @@
             // textBoxId
             // 
             this.textBoxId.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxId.Location = new System.Drawing.Point(78, 184);
-            this.textBoxId.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxId.Location = new System.Drawing.Point(79, 221);
+            this.textBoxId.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxId.Name = "textBoxId";
             this.textBoxId.Size = new System.Drawing.Size(240, 43);
             this.textBoxId.TabIndex = 16;
@@ -182,7 +274,7 @@
             // 
             this.label2.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label2.ForeColor = System.Drawing.Color.White;
-            this.label2.Location = new System.Drawing.Point(11, 187);
+            this.label2.Location = new System.Drawing.Point(12, 224);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(65, 36);
@@ -194,7 +286,7 @@
             // 
             this.listViewNetwork.HideSelection = false;
             this.listViewNetwork.Location = new System.Drawing.Point(11, 96);
-            this.listViewNetwork.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.listViewNetwork.Margin = new System.Windows.Forms.Padding(2);
             this.listViewNetwork.Name = "listViewNetwork";
             this.listViewNetwork.Size = new System.Drawing.Size(631, 76);
             this.listViewNetwork.TabIndex = 14;
@@ -204,7 +296,7 @@
             // 
             this.labelNetworkStatus.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.labelNetworkStatus.ForeColor = System.Drawing.Color.Red;
-            this.labelNetworkStatus.Location = new System.Drawing.Point(163, 58);
+            this.labelNetworkStatus.Location = new System.Drawing.Point(164, 58);
             this.labelNetworkStatus.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.labelNetworkStatus.Name = "labelNetworkStatus";
             this.labelNetworkStatus.Size = new System.Drawing.Size(172, 36);
@@ -227,7 +319,7 @@
             // buttonDisconnect
             // 
             this.buttonDisconnect.Location = new System.Drawing.Point(551, 9);
-            this.buttonDisconnect.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonDisconnect.Margin = new System.Windows.Forms.Padding(2);
             this.buttonDisconnect.Name = "buttonDisconnect";
             this.buttonDisconnect.Size = new System.Drawing.Size(88, 39);
             this.buttonDisconnect.TabIndex = 11;
@@ -238,7 +330,7 @@
             // buttonConnect
             // 
             this.buttonConnect.Location = new System.Drawing.Point(460, 9);
-            this.buttonConnect.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.buttonConnect.Margin = new System.Windows.Forms.Padding(2);
             this.buttonConnect.Name = "buttonConnect";
             this.buttonConnect.Size = new System.Drawing.Size(88, 39);
             this.buttonConnect.TabIndex = 10;
@@ -250,7 +342,7 @@
             // 
             this.textBoxPort.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxPort.Location = new System.Drawing.Point(383, 9);
-            this.textBoxPort.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxPort.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxPort.Name = "textBoxPort";
             this.textBoxPort.Size = new System.Drawing.Size(75, 43);
             this.textBoxPort.TabIndex = 9;
@@ -260,7 +352,7 @@
             // 
             this.textBoxIP.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.textBoxIP.Location = new System.Drawing.Point(48, 9);
-            this.textBoxIP.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.textBoxIP.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxIP.Name = "textBoxIP";
             this.textBoxIP.Size = new System.Drawing.Size(240, 43);
             this.textBoxIP.TabIndex = 8;
@@ -290,80 +382,29 @@
             this.label4.Text = "IP";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // listViewRoom
+            // label7
             // 
-            this.listViewRoom.HideSelection = false;
-            this.listViewRoom.Location = new System.Drawing.Point(324, 184);
-            this.listViewRoom.Margin = new System.Windows.Forms.Padding(2);
-            this.listViewRoom.Name = "listViewRoom";
-            this.listViewRoom.Size = new System.Drawing.Size(320, 86);
-            this.listViewRoom.TabIndex = 21;
-            this.listViewRoom.UseCompatibleStateImageBehavior = false;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.Color.White;
+            this.label7.Location = new System.Drawing.Point(12, 183);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(196, 36);
+            this.label7.TabIndex = 30;
+            this.label7.Text = "User Status :";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label6
+            // labelUserStatus
             // 
-            this.label6.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(322, 272);
-            this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(119, 36);
-            this.label6.TabIndex = 22;
-            this.label6.Text = "ROOM :";
-            this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelRoomNumber
-            // 
-            this.labelRoomNumber.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelRoomNumber.ForeColor = System.Drawing.Color.White;
-            this.labelRoomNumber.Location = new System.Drawing.Point(445, 272);
-            this.labelRoomNumber.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelRoomNumber.Name = "labelRoomNumber";
-            this.labelRoomNumber.Size = new System.Drawing.Size(119, 36);
-            this.labelRoomNumber.TabIndex = 23;
-            this.labelRoomNumber.Text = "-";
-            this.labelRoomNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // buttonRoomEnter
-            // 
-            this.buttonRoomEnter.Location = new System.Drawing.Point(579, 274);
-            this.buttonRoomEnter.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonRoomEnter.Name = "buttonRoomEnter";
-            this.buttonRoomEnter.Size = new System.Drawing.Size(65, 39);
-            this.buttonRoomEnter.TabIndex = 24;
-            this.buttonRoomEnter.Text = "Enter";
-            this.buttonRoomEnter.UseVisualStyleBackColor = true;
-            this.buttonRoomEnter.Click += new System.EventHandler(this.buttonRoomEnter_Click);
-            // 
-            // listViewChat
-            // 
-            this.listViewChat.HideSelection = false;
-            this.listViewChat.Location = new System.Drawing.Point(7, 317);
-            this.listViewChat.Margin = new System.Windows.Forms.Padding(2);
-            this.listViewChat.Name = "listViewChat";
-            this.listViewChat.Size = new System.Drawing.Size(637, 263);
-            this.listViewChat.TabIndex = 25;
-            this.listViewChat.UseCompatibleStateImageBehavior = false;
-            // 
-            // textBoxChat
-            // 
-            this.textBoxChat.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxChat.Location = new System.Drawing.Point(7, 584);
-            this.textBoxChat.Margin = new System.Windows.Forms.Padding(2);
-            this.textBoxChat.Name = "textBoxChat";
-            this.textBoxChat.Size = new System.Drawing.Size(541, 43);
-            this.textBoxChat.TabIndex = 26;
-            // 
-            // buttonChatEnter
-            // 
-            this.buttonChatEnter.Location = new System.Drawing.Point(552, 584);
-            this.buttonChatEnter.Margin = new System.Windows.Forms.Padding(2);
-            this.buttonChatEnter.Name = "buttonChatEnter";
-            this.buttonChatEnter.Size = new System.Drawing.Size(92, 43);
-            this.buttonChatEnter.TabIndex = 27;
-            this.buttonChatEnter.Text = "Enter";
-            this.buttonChatEnter.UseVisualStyleBackColor = true;
-            this.buttonChatEnter.Click += new System.EventHandler(this.buttonChatEnter_Click);
+            this.labelUserStatus.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelUserStatus.ForeColor = System.Drawing.Color.White;
+            this.labelUserStatus.Location = new System.Drawing.Point(212, 183);
+            this.labelUserStatus.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelUserStatus.Name = "labelUserStatus";
+            this.labelUserStatus.Size = new System.Drawing.Size(172, 36);
+            this.labelUserStatus.TabIndex = 31;
+            this.labelUserStatus.Text = "None";
+            this.labelUserStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // MainForm
             // 
@@ -375,7 +416,7 @@
             this.Controls.Add(this.panelMain);
             this.Controls.Add(this.panelTitle);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainForm";
             this.Text = "ChatClient";
             this.panelTitle.ResumeLayout(false);
@@ -411,10 +452,13 @@
         private System.Windows.Forms.Button buttonRoomEnter;
         private System.Windows.Forms.Label labelRoomNumber;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ListView listViewRoom;
         private System.Windows.Forms.Button buttonChatEnter;
         private System.Windows.Forms.TextBox textBoxChat;
         private System.Windows.Forms.ListView listViewChat;
+        private System.Windows.Forms.TextBox textBoxRoomNumber;
+        private System.Windows.Forms.Button buttonRoomLeave;
+        private System.Windows.Forms.Label labelUserStatus;
+        private System.Windows.Forms.Label label7;
     }
 }
 

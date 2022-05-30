@@ -33,13 +33,14 @@
             this.pictureBoxClose = new System.Windows.Forms.PictureBox();
             this.labelTitle = new System.Windows.Forms.Label();
             this.panelMain = new System.Windows.Forms.Panel();
+            this.labelUserStatus = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.buttonRoomLeave = new System.Windows.Forms.Button();
             this.textBoxRoomNumber = new System.Windows.Forms.TextBox();
             this.buttonChatEnter = new System.Windows.Forms.Button();
             this.textBoxChat = new System.Windows.Forms.TextBox();
             this.listViewChat = new System.Windows.Forms.ListView();
             this.buttonRoomEnter = new System.Windows.Forms.Button();
-            this.labelRoomNumber = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.buttonLogout = new System.Windows.Forms.Button();
             this.buttonLogin = new System.Windows.Forms.Button();
@@ -56,8 +57,6 @@
             this.textBoxIP = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.labelUserStatus = new System.Windows.Forms.Label();
             this.panelTitle.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxClose)).BeginInit();
             this.panelMain.SuspendLayout();
@@ -110,7 +109,6 @@
             this.panelMain.Controls.Add(this.textBoxChat);
             this.panelMain.Controls.Add(this.listViewChat);
             this.panelMain.Controls.Add(this.buttonRoomEnter);
-            this.panelMain.Controls.Add(this.labelRoomNumber);
             this.panelMain.Controls.Add(this.label6);
             this.panelMain.Controls.Add(this.buttonLogout);
             this.panelMain.Controls.Add(this.buttonLogin);
@@ -133,6 +131,30 @@
             this.panelMain.Size = new System.Drawing.Size(646, 650);
             this.panelMain.TabIndex = 1;
             // 
+            // labelUserStatus
+            // 
+            this.labelUserStatus.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelUserStatus.ForeColor = System.Drawing.Color.White;
+            this.labelUserStatus.Location = new System.Drawing.Point(212, 183);
+            this.labelUserStatus.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.labelUserStatus.Name = "labelUserStatus";
+            this.labelUserStatus.Size = new System.Drawing.Size(172, 36);
+            this.labelUserStatus.TabIndex = 31;
+            this.labelUserStatus.Text = "None";
+            this.labelUserStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // label7
+            // 
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.ForeColor = System.Drawing.Color.White;
+            this.label7.Location = new System.Drawing.Point(12, 183);
+            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(196, 36);
+            this.label7.TabIndex = 30;
+            this.label7.Text = "User Status :";
+            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // buttonRoomLeave
             // 
             this.buttonRoomLeave.Location = new System.Drawing.Point(492, 311);
@@ -147,7 +169,7 @@
             // textBoxRoomNumber
             // 
             this.textBoxRoomNumber.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.textBoxRoomNumber.Location = new System.Drawing.Point(491, 264);
+            this.textBoxRoomNumber.Location = new System.Drawing.Point(492, 265);
             this.textBoxRoomNumber.Margin = new System.Windows.Forms.Padding(2);
             this.textBoxRoomNumber.Name = "textBoxRoomNumber";
             this.textBoxRoomNumber.Size = new System.Drawing.Size(149, 43);
@@ -194,28 +216,16 @@
             this.buttonRoomEnter.UseVisualStyleBackColor = true;
             this.buttonRoomEnter.Click += new System.EventHandler(this.buttonRoomEnter_Click);
             // 
-            // labelRoomNumber
-            // 
-            this.labelRoomNumber.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelRoomNumber.ForeColor = System.Drawing.Color.White;
-            this.labelRoomNumber.Location = new System.Drawing.Point(337, 264);
-            this.labelRoomNumber.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelRoomNumber.Name = "labelRoomNumber";
-            this.labelRoomNumber.Size = new System.Drawing.Size(149, 43);
-            this.labelRoomNumber.TabIndex = 23;
-            this.labelRoomNumber.Text = "-";
-            this.labelRoomNumber.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // label6
             // 
             this.label6.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.ForeColor = System.Drawing.Color.White;
-            this.label6.Location = new System.Drawing.Point(337, 224);
+            this.label6.Location = new System.Drawing.Point(339, 268);
             this.label6.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(119, 36);
             this.label6.TabIndex = 22;
-            this.label6.Text = "ROOM";
+            this.label6.Text = "ROOM :";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // buttonLogout
@@ -382,30 +392,6 @@
             this.label4.Text = "IP";
             this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // label7
-            // 
-            this.label7.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.ForeColor = System.Drawing.Color.White;
-            this.label7.Location = new System.Drawing.Point(12, 183);
-            this.label7.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(196, 36);
-            this.label7.TabIndex = 30;
-            this.label7.Text = "User Status :";
-            this.label7.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // labelUserStatus
-            // 
-            this.labelUserStatus.Font = new System.Drawing.Font("Segoe UI", 19.875F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelUserStatus.ForeColor = System.Drawing.Color.White;
-            this.labelUserStatus.Location = new System.Drawing.Point(212, 183);
-            this.labelUserStatus.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.labelUserStatus.Name = "labelUserStatus";
-            this.labelUserStatus.Size = new System.Drawing.Size(172, 36);
-            this.labelUserStatus.TabIndex = 31;
-            this.labelUserStatus.Text = "None";
-            this.labelUserStatus.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 12F);
@@ -450,7 +436,6 @@
         private System.Windows.Forms.Button buttonLogout;
         private System.Windows.Forms.Button buttonLogin;
         private System.Windows.Forms.Button buttonRoomEnter;
-        private System.Windows.Forms.Label labelRoomNumber;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button buttonChatEnter;
         private System.Windows.Forms.TextBox textBoxChat;

@@ -162,6 +162,8 @@ namespace ChatClient
             datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
             datas.AddRange(roomEnterRequest.ToBytes());
             SendData(datas.ToArray());
+
+            _roomNumber = (UInt16)roomNumber;
             return true;
         }
 
@@ -185,15 +187,15 @@ namespace ChatClient
             bool bResult = false;
             if(IsConnected())
             {
-                AllUserChatRequest allUserChatRequest = new AllUserChatRequest();
-                allUserChatRequest.SetCodeMsg("", chat);
+                RoomChatRequest roomChatRequest = new RoomChatRequest();
+                roomChatRequest.SetValue(chat);
 
                 List<byte> datas = new List<byte>();
-                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ALL_USER_CHAT_REQUEST)));
-                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + allUserChatRequest.GetSize())));
+                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.ROOM_CHAT_REQUEST)));
+                datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE + roomChatRequest.GetSize())));
                 datas.AddRange(new byte[] { (byte)0 });
                 datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
-                datas.AddRange(allUserChatRequest.ToBytes());
+                datas.AddRange(roomChatRequest.ToBytes());
                 SendData(datas.ToArray());
                 bResult = true;
             }
@@ -266,10 +268,6 @@ namespace ChatClient
                 {
                     UserType(USER_STATUS_INFO.ROOM);
                 }
-                else
-                {
-                    UserType(USER_STATUS_INFO.LOBBY);
-                }
             }
         }
         private void PacketFunc_RoomLeaveResponse(PacketData packetData) 
@@ -281,10 +279,6 @@ namespace ChatClient
                 {
                     UserType(USER_STATUS_INFO.LOBBY);
                 }
-                else
-                {
-
-                }
             }
         }
         private void PacketFunc_RoomChatResponse(PacketData packetData) 
@@ -292,11 +286,7 @@ namespace ChatClient
             RoomChatResponse roomChatResponse = new RoomChatResponse();
             if(roomChatResponse.FromBytes(packetData.BodyData,0))
             {
-
-            }
-            else
-            {
-
+                SystemInfo("Success RoomChatResponse");
             }
 
         }
@@ -305,11 +295,10 @@ namespace ChatClient
             RoomChatNotify roomChatNotify =new RoomChatNotify();
             if( roomChatNotify.FromBytes(packetData.BodyData,0))
             {
-
-            }
-            else
-            {
-
+                if (_eReceiveChat != null)
+                {
+                    _eReceiveChat(roomChatNotify.GetId(), roomChatNotify.GetMsg());
+                }
             }
         }
     }

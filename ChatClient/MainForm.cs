@@ -178,7 +178,10 @@ namespace ChatClient
         {
             _chatClinet.Login(textBoxId.Text, textBoxPw.Text);
         }
-
+        private void buttonLogout_Click(object sender, EventArgs e)
+        {
+            _chatClinet.LogOut();
+        }
         private void buttonRoomEnter_Click(object sender, EventArgs e)
         {
             int roomNum = int.Parse(textBoxRoomNumber.Text);
@@ -203,10 +206,7 @@ namespace ChatClient
             listViewChat.Items.Add(item);
         }
 
-        private void buttonLogout_Click(object sender, EventArgs e)
-        {
 
-        }
 
     }
 }

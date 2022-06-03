@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using static ChatClient.Client.PacketDefine;
-
+ 
 namespace ChatClient
 {
     public partial class MainForm : Form
@@ -39,6 +39,7 @@ namespace ChatClient
         }
         private void pictureBoxClose_Click(object sender, EventArgs e)
         {
+            _chatClinet.Disonnect();
             _chatClinet.Dispose();
             _chatClinet = null;
             this.Close();
@@ -158,8 +159,12 @@ namespace ChatClient
             string size = bytes.Length.ToString();
             string hex = BitConverter.ToString(bytes);
 
+            if (listViewNetwork.Items.Count > 2)
+            {
+                listViewNetwork.Items.RemoveAt(2);
+            }
             ListViewItem item = new ListViewItem(new string[] {datetime,size,hex });
-            listViewNetwork.Items.Add(item);
+            listViewNetwork.Items.Insert(0, item);
         }
         private void AddListViewItem(string str)
         {

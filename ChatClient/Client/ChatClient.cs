@@ -57,10 +57,10 @@ namespace ChatClient
         public void Dispose()
         {
             _runReceiveThread = false;
-            if (_receiveThread != null)
-            {
-                _receiveThread.Join();
-            }
+            //if (_receiveThread != null)
+            //{
+            //    _receiveThread.Join();
+            //}
             base.Dispose();
         }
 
@@ -80,10 +80,10 @@ namespace ChatClient
         }
         public override void OnReceive(byte[] bytes, int size) 
         {
-            if (_eOnReceive != null)
-            {
-                _eOnReceive(bytes, size);
-            }
+            //if (_eOnReceive != null)
+            //{
+            //    _eOnReceive(bytes, size);
+            //}
             _packetBufferManager.Write(bytes, 0, size);
         }
         public override void OnSend(byte[] bytes, int size) 
@@ -119,7 +119,11 @@ namespace ChatClient
                         PacketData packetData = _packetBufferManager.ReadPacket();
                         wasWorked = true;
                         
-                        packetFuncDic[(PacketDefine.PACKET_ID)packetData.PacketID](packetData);
+                        if(PACKET_ID.NONE < (PacketDefine.PACKET_ID)packetData.PacketID 
+                            && (PacketDefine.PACKET_ID)packetData.PacketID < PACKET_ID.END)
+                        {
+                            packetFuncDic[(PacketDefine.PACKET_ID)packetData.PacketID](packetData);
+                        }
                     }
                 } while (false);
                 
@@ -147,6 +151,16 @@ namespace ChatClient
         }
         public bool LogOut()
         {
+            //LogoutRequest logoutRequest = new LogoutRequest();
+            PacketData packetData;
+            List<byte> datas = new List<byte>();
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.PACKET_ID.LOGOUT_REQUEST)));
+            datas.AddRange(BitConverter.GetBytes((UInt16)(PacketDefine.HEDER_SIZE)));
+            datas.AddRange(new byte[] { (byte)0 });
+            datas.AddRange(BitConverter.GetBytes((UInt64)(Environment.TickCount)));
+            //datas.AddRange(logoutRequest.ToBytes());
+            SendData(datas.ToArray());
+
             return true;
         }
         public bool EnterRoom(uint roomNumber)
@@ -212,6 +226,7 @@ namespace ChatClient
             packetFuncDic.Add(PacketDefine.PACKET_ID.SYSYEM_DISCONNECT, PacketFunc_SystemDisconnect);
             packetFuncDic.Add(PacketDefine.PACKET_ID.SYSYEM_CONNECT, PacketFunc_SystemConnect);
             packetFuncDic.Add(PacketDefine.PACKET_ID.LOGIN_RESPONSE, PacketFunc_LoginResponse);
+            packetFuncDic.Add(PacketDefine.PACKET_ID.LOGOUT_RESPONSE, PacketFunc_LogoutResponse);
             packetFuncDic.Add(PacketDefine.PACKET_ID.ALL_USER_CHAT_RESPONSE, PacketFunc_AllUserChatResponse);
             packetFuncDic.Add(PacketDefine.PACKET_ID.ALL_USER_CHAT_NOTIFY, PacketFunc_AllUserChatNotify);
             packetFuncDic.Add(PacketDefine.PACKET_ID.ROOM_ENTER_RESPONSE, PacketFunc_RoomEnterResponse);
@@ -242,6 +257,20 @@ namespace ChatClient
                 UserType(USER_STATUS_INFO.CONNECT);
             }
         }
+        private void PacketFunc_LogoutResponse(PacketData packetData)
+        {
+            LogoutResponse logoutResponse = new LogoutResponse();
+            logoutResponse.FromBytes(packetData.BodyData, 0);
+            if(logoutResponse.result == 1)
+            {
+                SystemInfo("Logout Success");
+                UserType(USER_STATUS_INFO.NONE);
+            }
+            else
+            {
+                SystemInfo("Logout fail");
+            }
+        }
         private void PacketFunc_AllUserChatResponse(PacketData packetData) 
         {
             AllUserChatResponse allUserChatResponse = new AllUserChatResponse();
@@ -250,12 +279,20 @@ namespace ChatClient
         }
         private void PacketFunc_AllUserChatNotify(PacketData packetData) 
         {
-            RoomChatNotify roomChatNotify = new RoomChatNotify();
-            if(roomChatNotify.FromBytes(packetData.BodyData,0))
+            //RoomChatNotify roomChatNotify = new RoomChatNotify();
+            //if(roomChatNotify.FromBytes(packetData.BodyData,0))
+            //{
+            //    if (_eReceiveChat != null)
+            //    {
+            //        _eReceiveChat(roomChatNotify.GetId(), roomChatNotify.GetMsg());
+            //    }
+            //}
+            AllUserChatNotify allUserChatNotify = new AllUserChatNotify();
+            if (allUserChatNotify.FromBytes(packetData.BodyData, 0))
             {
                 if (_eReceiveChat != null)
                 {
-                    _eReceiveChat(roomChatNotify.GetId(), roomChatNotify.GetMsg());
+                    _eReceiveChat(allUserChatNotify.GetCode(), allUserChatNotify.GetMsg());
                 }
             }
         }

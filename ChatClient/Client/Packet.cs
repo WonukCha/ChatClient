@@ -47,6 +47,7 @@ namespace ChatClient.Client.Packet
 			return id.Length + pw.Length;
 		}
 	};
+
 	public class LoginResponse
 	{
 		public Int16 result;
@@ -56,8 +57,20 @@ namespace ChatClient.Client.Packet
 			result = BitConverter.ToInt16(bodyData, offset);
 		}
 	};
+	public class LogoutRequest
+	{
 
-	public class AllUserChatRequest
+	}
+	public class LogoutResponse
+	{
+		public Int16 result;
+		public void FromBytes(byte[] bodyData, int offset)
+		{
+			result = BitConverter.ToInt16(bodyData, offset);
+		}
+	};
+
+		public class AllUserChatRequest
 	{
 		byte[] checkCode = new byte[PacketDefine.NAME_SIZE];
 		byte[] msg = new byte[PacketDefine.CHAT_SIZE];
@@ -88,6 +101,36 @@ namespace ChatClient.Client.Packet
 	public class AllUserChatResponse
 	{
 		
+	};
+	public class AllUserChatNotify
+	{
+		byte[] checkCode = new byte[PacketDefine.NAME_SIZE];
+		byte[] msg = new byte[PacketDefine.CHAT_SIZE];
+
+		public bool FromBytes(byte[] bodyData, int offset)
+		{
+			bool bIsResult = false;
+
+			if (bodyData.Length - offset == PacketDefine.ID_SIZE + PacketDefine.CHAT_SIZE)
+			{
+				Buffer.BlockCopy(bodyData, offset, checkCode, 0, PacketDefine.NAME_SIZE);
+				Buffer.BlockCopy(bodyData, offset + PacketDefine.ID_SIZE, msg, 0, PacketDefine.CHAT_SIZE);
+				bIsResult = true;
+			}
+			return bIsResult;
+		}
+		public int GetSize()
+		{
+			return checkCode.Length + msg.Length;
+		}
+		public string GetCode()
+		{
+			return Encoding.Default.GetString(checkCode);
+		}
+		public string GetMsg()
+		{
+			return Encoding.Default.GetString(msg);
+		}
 	};
 
 	public class RoomEnterRequest

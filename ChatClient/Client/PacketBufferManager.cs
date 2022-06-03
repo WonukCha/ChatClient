@@ -28,12 +28,16 @@ namespace ChatClient.Client
                 packetData.DataSize = BitConverter.ToInt16(heder, 2);
                 packetData.DataSize -= mHeaderSize;
                 packetData.Type = (SByte)heder[4];
-                if(packetData.DataSize <= Size())
+                if (packetData.DataSize  > 0 && packetData.DataSize <= Size())
                 {
                     Read(heder, 0, mHeaderSize);
                     byte[] packet = new byte[packetData.DataSize];
-                    Read(packet,0, packetData.DataSize);
+                    Read(packet, 0, packetData.DataSize);
                     packetData.BodyData = packet;
+                }
+                else
+                {
+                    packetData.PacketID = 0;
                 }
             }
             return packetData;
